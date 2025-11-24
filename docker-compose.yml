@@ -1,0 +1,70 @@
+name: ConvertX 
+ 
+services:
+  convertx:
+    image: ghcr.io/c4illin/convertx:v0.14.1
+    container_name: convertx
+    restart: unless-stopped
+    expos:
+      - 3000 
+    user: 0:0
+    environment:
+      - PUID=0
+      - PGID=0
+      - JWT_SECRET=$default_pwd
+      - ACCOUNT_REGISTRATION=False	
+      - HTTP_ALLOWED=true
+      - ALLOW_UNAUTHENTICATED=False
+      - AUTO_DELETE_EVERY_N_HOURS=24
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+
+    volumes:
+      - ./DATA:/AppData/$AppID/data:/app/data
+      - /DATA/Downloads:/downloads:ro #다운로드
+      - /DATA/Documents:/documnets:ro #중요문서 삭제 안되게 막는
+
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--tries=1","http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+x -casaos:
+  architectures:
+    - amd64
+    - arm64
+  main: convertx 
+  pre -install-cmd: \
+    #mkdir -p //DATA:/AppData/$AppID/data &&
+    #chmod -R 777 /Data/AppData/$AppID.daa &&
+  author : Castle_zoon
+  category: Utilities
+  developer: c4illin
+  icon: https://github.com/seongjun6214/YunderaClass/blob/main/Apps/Stirling-PDF/icon.png
+  screenshot_link:
+    -https://github.com/seongjun6214/YunderaClass/tree/main/Apps/ConvertX/screenshot1.png
+    -https://github.com/seongjun6214/YunderaClass/tree/main/Apps/ConvertX/screenshot2.png
+    -https://github.com/seongjun6214/YunderaClass/tree/main/Apps/ConvertX/screenshot3.png
+  title:
+    en_us: Convertx
+    ko_kr: ConvertX
+  tagline:
+    en_us: tagline ConvertX123
+    ko_kr: tagline 한국어입니다.
+  description:
+    en_us: description ConvertX123
+    ko_kr: description 한국어입니다.
+  tips:
+    before_install: 
+     en_us: before_install ConvertX123
+     ko_kr: before_install 한국어입니다.
+  index: /
+  webui_port: 3000
+      
+
